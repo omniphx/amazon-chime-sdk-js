@@ -152,9 +152,12 @@ if (app === 'meeting') {
   fs.copySync(appHtml('meetingV2'), 'src/indexV2.html');
 }
 
+spawnOrFail('chmod 755 $(find src -type d)')
+spawnOrFail('chmod 644 $(find src -type f)')
+
 spawnOrFail('sam', ['package', '--s3-bucket', `${bucket}`,
                     `--output-template-file`, `build/packaged.yaml`,
-                    '--region',  `${region}`]);
+                    '--region',  `${region}`, '--force-upload']);
 console.log('Deploying serverless application');
 spawnOrFail('sam', ['deploy', '--template-file', './build/packaged.yaml', '--stack-name', `${stack}`,
                     '--parameter-overrides', `UseEventBridge=${useEventBridge}`,
